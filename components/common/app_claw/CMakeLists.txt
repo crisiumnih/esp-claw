@@ -150,6 +150,10 @@ if(CONFIG_APP_CLAW_CAP_LUA AND CONFIG_APP_CLAW_LUA_MODULE_MCPWM)
     list(APPEND app_claw_requires lua_module_mcpwm)
 endif()
 
+if(CONFIG_APP_CLAW_CAP_LUA AND CONFIG_APP_CLAW_LUA_MODULE_RC522)
+    list(APPEND app_claw_requires lua_module_rc522)
+endif()
+
 if(CONFIG_APP_CLAW_CAP_LUA AND CONFIG_APP_CLAW_LUA_MODULE_STORAGE)
     list(APPEND app_claw_requires lua_module_storage)
 endif()

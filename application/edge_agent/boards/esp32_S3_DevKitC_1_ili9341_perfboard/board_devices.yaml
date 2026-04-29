@@ -2,14 +2,6 @@ version: 1.0.0
 # Devices Configuration
 devices:
 
-  - name: fake_audio_dac
-    chip: none
-    type: audio_codec
-    version: default
-    init_skip: true
-    peripherals:
-      - name: i2s_audio_out
-
   - name: fake_camera
     type: camera
     version: default
@@ -26,12 +18,16 @@ devices:
       espressif/usb_host_uvc: "2.4.2"
 
   - name: audio_dac
-    type: custom
+    chip: none
+    type: audio_codec
     version: default
-    dependencies:
-      espressif/usb_host_uac: "^1.3.0"
     config:
-      sample_rate_hz: 16000
+      adc_enabled: false
+      dac_enabled: true
+      dac_max_channel: 1
+      dac_channel_mask: "1"
+    peripherals:
+      - name: i2s_audio_out
 
   - name: audio_adc
     type: custom

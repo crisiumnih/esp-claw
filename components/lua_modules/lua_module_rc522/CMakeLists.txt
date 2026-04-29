@@ -1,0 +1,10 @@
+idf_component_register(
+    SRCS
+        "src/lua_module_rc522.c"
+    INCLUDE_DIRS
+        "include"
+    REQUIRES
+        cap_lua
+        esp_driver_gpio
+        esp_driver_spi
+)

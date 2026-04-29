@@ -265,6 +265,13 @@ menu "App Claw Config"
                 Enable the MCPWM Lua module and keep app_claw's direct dependency
                 on lua_module_mcpwm when Lua capability is enabled.
 
+        config APP_CLAW_LUA_MODULE_RC522
+            bool "Enable RC522 Lua module"
+            default y
+            help
+                Enable the RC522 Lua module and keep app_claw's direct dependency
+                on lua_module_rc522 when Lua capability is enabled.
+
         config APP_CLAW_LUA_MODULE_STORAGE
             bool "Enable storage Lua module"
             default y

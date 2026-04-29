@@ -58,6 +58,9 @@
 #if CONFIG_APP_CLAW_LUA_MODULE_MCPWM
 #include "lua_module_mcpwm.h"
 #endif
+#if CONFIG_APP_CLAW_LUA_MODULE_RC522
+#include "lua_module_rc522.h"
+#endif
 #if CONFIG_APP_CLAW_LUA_MODULE_UART
 #include "lua_module_uart.h"
 #endif
@@ -316,6 +319,14 @@ static esp_err_t app_lua_register_mcpwm(const char *fatfs_base_path)
 }
 #endif
 
+#if CONFIG_APP_CLAW_LUA_MODULE_RC522
+static esp_err_t app_lua_register_rc522(const char *fatfs_base_path)
+{
+    (void)fatfs_base_path;
+    return lua_module_rc522_register();
+}
+#endif
+
 #if CONFIG_APP_CLAW_LUA_MODULE_UART
 static esp_err_t app_lua_register_uart(const char *fatfs_base_path)
 {
@@ -411,6 +422,9 @@ static const app_lua_module_entry_t s_lua_module_entries[] = {
 #if CONFIG_APP_CLAW_LUA_MODULE_MCPWM
     { "mcpwm", "MCPWM", app_lua_register_mcpwm },
 #endif
+#if CONFIG_APP_CLAW_LUA_MODULE_RC522
+    { "rc522", "RC522", app_lua_register_rc522 },
+#endif
 #if CONFIG_APP_CLAW_LUA_MODULE_UART
     { "uart", "UART", app_lua_register_uart },
 #endif
@@ -473,6 +487,9 @@ static const app_lua_module_info_t s_lua_module_infos[] = {
 #endif
 #if CONFIG_APP_CLAW_LUA_MODULE_MCPWM
     { "mcpwm", "MCPWM" },
+#endif
+#if CONFIG_APP_CLAW_LUA_MODULE_RC522
+    { "rc522", "RC522" },
 #endif
 #if CONFIG_APP_CLAW_LUA_MODULE_UART
     { "uart", "UART" },
