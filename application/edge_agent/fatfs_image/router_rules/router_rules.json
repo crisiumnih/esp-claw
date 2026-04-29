@@ -30,7 +30,7 @@
   {
     "id": "im_any_message_working_reply",
     "description": "Reply to any IM text message before other automation handling.",
-    "enabled": true,
+    "enabled": false,
     "consume_on_match": false,
     "ack": "{{event.source_channel}} working reply sent",
     "match": {
