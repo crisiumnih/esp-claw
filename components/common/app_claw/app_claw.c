@@ -144,6 +144,10 @@ static const char *app_llm_provider_name(const app_claw_config_t *config)
         return "Qwen Compatible";
     }
     if (config->llm_base_url[0] &&
+        strstr(config->llm_base_url, ":11434") != NULL) {
+        return "Ollama";
+    }
+    if (config->llm_base_url[0] &&
         strcmp(config->llm_base_url, "https://api.deepseek.com") == 0) {
         return "DeepSeek";
     }
@@ -155,10 +159,19 @@ static const char *app_llm_provider_name(const app_claw_config_t *config)
 
 static bool app_llm_is_configured(const app_claw_config_t *config)
 {
+    bool api_key_required;
+
+    if (!config) {
+        return false;
+    }
+
+    api_key_required = !(config->llm_auth_type[0] &&
+                         strcmp(config->llm_auth_type, "none") == 0);
+
     return config &&
-           config->llm_api_key[0] &&
            config->llm_model[0] &&
-           config->llm_profile[0];
+           config->llm_profile[0] &&
+           (!api_key_required || config->llm_api_key[0]);
 }
 
 #if CONFIG_APP_CLAW_CAP_SCHEDULER && CONFIG_APP_CLAW_CAP_TIME

@@ -264,12 +264,9 @@ static esp_err_t openai_compatible_init(const claw_llm_runtime_config_t *config,
     openai_compatible_backend_ctx_t *ctx;
     const char *base_url;
     const char *auth_type;
+    bool api_key_required;
 
     if (!config || !profile || !out_backend_ctx || !out_error_message) {
-        return ESP_ERR_INVALID_ARG;
-    }
-    if (!config->api_key || !config->api_key[0]) {
-        *out_error_message = dup_printf("LLM API key is empty");
         return ESP_ERR_INVALID_ARG;
     }
     if (!config->model || !config->model[0]) {
@@ -279,6 +276,11 @@ static esp_err_t openai_compatible_init(const claw_llm_runtime_config_t *config,
 
     base_url = (config->base_url && config->base_url[0]) ? config->base_url : profile->default_base_url;
     auth_type = (config->auth_type && config->auth_type[0]) ? config->auth_type : "bearer";
+    api_key_required = strcmp(auth_type, "none") != 0;
+    if (api_key_required && (!config->api_key || !config->api_key[0])) {
+        *out_error_message = dup_printf("LLM API key is empty");
+        return ESP_ERR_INVALID_ARG;
+    }
     if (!base_url || !base_url[0]) {
         *out_error_message = dup_printf("LLM base_url is empty");
         return ESP_ERR_INVALID_ARG;
@@ -290,7 +292,7 @@ static esp_err_t openai_compatible_init(const claw_llm_runtime_config_t *config,
         return ESP_ERR_NO_MEM;
     }
 
-    ctx->api_key = strdup(config->api_key);
+    ctx->api_key = strdup(config->api_key ? config->api_key : "");
     ctx->model = strdup(config->model);
     ctx->base_url = strdup(base_url);
     ctx->auth_type = strdup(auth_type);

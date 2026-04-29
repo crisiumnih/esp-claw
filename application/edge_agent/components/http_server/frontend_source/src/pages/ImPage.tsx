@@ -586,6 +586,9 @@ export const ImPage: Component = () => {
               value={tab.form.tg_bot_token}
               onInput={(e) => tab.setForm('tg_bot_token', e.currentTarget.value)}
             />
+            <div class="pt-3">
+              <Banner kind="info" message={t('imTelegramHint') as string} />
+            </div>
           </div>
         </PlatformRow>
       </div>

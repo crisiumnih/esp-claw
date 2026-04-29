@@ -1,8 +1,8 @@
-path = "/Users/crisi/.espressif"
-idf_path = "/Users/crisi/.espressif/v5.5.4/esp-idf"
-esp_idf_json_path = "/Users/crisi/.espressif/tools"
-tool_download_folder_name = "/Users/crisi/.espressif/dist"
-tool_install_folder_name = "/Users/crisi/.espressif/tools"
+# Keep this config portable across machines.
+# For a custom install location, prefer CLI/env overrides per host, e.g.:
+#   ESP_PATH=/opt/espressif eim install --config eim_config.toml
+# or:
+#   eim install --config eim_config.toml -p /opt/espressif
 target = ["all"]
 idf_versions = ["v5.5.4"]
 tools_json_file = "tools/tools.json"
@@ -17,7 +17,6 @@ install_all_prerequisites = true
 skip_prerequisites_check = false
 cleanup = false
 python_env_folder_name = "python"
-activation_script_path_override = "/Users/crisi/.espressif/tools"
 python_version_override = "python313"
 create_bat_activation_script = false
 

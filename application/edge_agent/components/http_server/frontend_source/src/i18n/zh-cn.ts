@@ -70,7 +70,9 @@ export const zhCn: Dict = {
   sectionLlm: 'LLM 设置',
   llmProvider: 'LLM 提供商',
   llmProviderOpenai: 'OpenAI',
+  llmProviderGemini: 'Gemini',
   llmProviderQwen: 'Qwen 兼容',
+  llmProviderOllamaQwen: 'Ollama Qwen',
   llmProviderDeepSeek: 'DeepSeek',
   llmProviderAnthropic: 'Anthropic',
   llmProviderCustom: '自定义',
@@ -89,6 +91,10 @@ export const zhCn: Dict = {
   llmAuthType: '认证类型',
   llmAuthTypePlaceholder: 'bearer / api-key / none',
   llmValidationRequiredFields: '保存前请补全 LLM 必填项：{fields}。',
+  llmGeminiHint:
+    '请使用新的 Gemini API Key，并选择模型 gemini-2.5-flash。OpenAI 兼容 Base URL 已预填。',
+  llmOllamaHint:
+    '请在局域网主机上运行 Ollama，拉取 qwen3.6:latest，并将 Base URL 设为 http://YOUR-PC-IP:11434/v1。API Key 保持为“ollama”即可，Ollama 会忽略它。',
 
   sectionIm: '即时通讯 (IM)',
   imAdd: '添加',
@@ -100,6 +106,8 @@ export const zhCn: Dict = {
   imFeishuTitle: '飞书',
   imQqTitle: 'QQ',
   imTelegramTitle: 'Telegram',
+  imTelegramHint:
+    '先用 @BotFather 创建 Token，保存并重启设备，然后先私聊机器人发送一条消息，设备才能在该聊天中回复。',
   imValidationIncompletePlatform: '保存前请将 {platform} 配置完整，缺少：{fields}。',
   imWechatCredsFilled: '凭据已从二维码登录填入，请在下方高级设置中确认后点击保存。',
   qqAppId: 'QQ App ID',

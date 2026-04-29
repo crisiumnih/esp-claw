@@ -10,9 +10,10 @@ import { SavePanel } from '../components/ui/SavePanel';
 import { Banner } from '../components/ui/Banner';
 import { pushToast } from '../state/toast';
 
-type ProviderKey = 'openai' | 'qwen' | 'deepseek' | 'anthropic' | 'custom';
+type ProviderKey = 'openai' | 'gemini' | 'qwen' | 'ollama_qwen' | 'deepseek' | 'anthropic' | 'custom';
 
 type ProviderPreset = {
+  llm_api_key?: string;
   llm_backend_type: string;
   llm_profile: string;
   llm_base_url: string;
@@ -26,10 +27,23 @@ const PROVIDER_PRESETS: Record<Exclude<ProviderKey, 'custom'>, ProviderPreset> =
     llm_base_url: 'https://api.openai.com/v1',
     llm_auth_type: 'bearer',
   },
+  gemini: {
+    llm_backend_type: 'openai_compatible',
+    llm_profile: 'custom_openai_compatible',
+    llm_base_url: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+    llm_auth_type: 'bearer',
+  },
   qwen: {
     llm_backend_type: 'openai_compatible',
     llm_profile: 'qwen_compatible',
     llm_base_url: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+    llm_auth_type: 'bearer',
+  },
+  ollama_qwen: {
+    llm_api_key: 'ollama',
+    llm_backend_type: 'openai_compatible',
+    llm_profile: 'custom_openai_compatible',
+    llm_base_url: '',
     llm_auth_type: 'bearer',
   },
   deepseek: {
@@ -48,10 +62,14 @@ const PROVIDER_PRESETS: Record<Exclude<ProviderKey, 'custom'>, ProviderPreset> =
 
 const DEFAULT_MODELS: Record<Exclude<ProviderKey, 'custom'>, string> = {
   openai: 'gpt-5.4',
+  gemini: 'gemini-2.5-flash',
   qwen: 'qwen3.6-plus',
+  ollama_qwen: 'qwen3.6:latest',
   deepseek: 'deepseek-v4-pro',
   anthropic: 'claude-sonnet-4-6',
 };
+
+const OLLAMA_BASE_URL_EXAMPLE = 'http://YOUR-PC-IP:11434/v1';
 
 type LlmForm = {
   llm_api_key: string;
@@ -63,8 +81,22 @@ type LlmForm = {
   llm_auth_type: string;
 };
 
+function isOllamaPreset(form: LlmForm): boolean {
+  const backend = form.llm_backend_type.trim();
+  const profile = form.llm_profile.trim();
+  const authType = form.llm_auth_type.trim();
+  const apiKey = form.llm_api_key.trim();
+  const baseUrl = form.llm_base_url.trim();
+
+  return backend === 'openai_compatible' &&
+    profile === 'custom_openai_compatible' &&
+    (!baseUrl || baseUrl.includes(':11434')) &&
+    (authType === 'bearer' || authType === 'none') &&
+    (apiKey === 'ollama' || authType === 'none');
+}
+
 function detectPreset(form: LlmForm): ProviderKey {
-  for (const key of Object.keys(PROVIDER_PRESETS) as Exclude<ProviderKey, 'custom'>[]) {
+  for (const key of ['openai', 'gemini', 'qwen', 'deepseek', 'anthropic'] as const) {
     const preset = PROVIDER_PRESETS[key];
     if (
       preset.llm_backend_type === form.llm_backend_type.trim() &&
@@ -74,6 +106,9 @@ function detectPreset(form: LlmForm): ProviderKey {
     ) {
       return key;
     }
+  }
+  if (isOllamaPreset(form)) {
+    return 'ollama_qwen';
   }
   return 'custom';
 }
@@ -104,6 +139,12 @@ export const LlmPage: Component = () => {
   const [validationError, setValidationError] = createSignal<string | null>(null);
 
   const preset = createMemo(() => detectPreset(tab.form));
+  const apiKeyRequired = createMemo(() => tab.form.llm_auth_type.trim() !== 'none');
+  const baseUrlPlaceholder = createMemo(() =>
+    preset() === 'ollama_qwen'
+      ? OLLAMA_BASE_URL_EXAMPLE
+      : (t('llmBaseUrlPlaceholder') as string),
+  );
 
   createEffect(() => {
     void tab.form.llm_api_key;
@@ -118,6 +159,9 @@ export const LlmPage: Component = () => {
   const applyPreset = (key: ProviderKey) => {
     if (key === 'custom') return;
     const preset = PROVIDER_PRESETS[key];
+    if (preset.llm_api_key !== undefined) {
+      tab.setForm('llm_api_key', preset.llm_api_key);
+    }
     tab.setForm('llm_backend_type', preset.llm_backend_type);
     tab.setForm('llm_profile', preset.llm_profile);
     tab.setForm('llm_base_url', preset.llm_base_url);
@@ -127,13 +171,15 @@ export const LlmPage: Component = () => {
 
   const handleSave = async () => {
     const requiredFields: Array<[keyof LlmForm, string]> = [
-      ['llm_api_key', t('llmApiKey') as string],
       ['llm_model', t('llmModel') as string],
       ['llm_backend_type', t('llmBackend') as string],
       ['llm_profile', t('llmProfile') as string],
       ['llm_base_url', t('llmBaseUrl') as string],
       ['llm_auth_type', t('llmAuthType') as string],
     ];
+    if (apiKeyRequired()) {
+      requiredFields.unshift(['llm_api_key', t('llmApiKey') as string]);
+    }
     const missing = requiredFields
       .filter(([key]) => !tab.form[key].trim())
       .map(([, label]) => label);
@@ -159,6 +205,16 @@ export const LlmPage: Component = () => {
           <Banner kind="error" message={validationError() ?? tab.error() ?? undefined} />
         </div>
       </Show>
+      <Show when={preset() === 'ollama_qwen'}>
+        <div class="px-5 pt-4">
+          <Banner kind="info" message={t('llmOllamaHint') as string} />
+        </div>
+      </Show>
+      <Show when={preset() === 'gemini'}>
+        <div class="px-5 pt-4">
+          <Banner kind="info" message={t('llmGeminiHint') as string} />
+        </div>
+      </Show>
       <div class="divide-y divide-[var(--color-border-subtle)] mt-2">
         <StaticConfigBlock title={t('sectionLlm') as string}>
           <div class="grid gap-3 sm:grid-cols-2 pt-2">
@@ -168,7 +224,9 @@ export const LlmPage: Component = () => {
               onChange={(event) => applyPreset(event.currentTarget.value as ProviderKey)}
             >
               <option value="openai">{t('llmProviderOpenai') as string}</option>
+              <option value="gemini">{t('llmProviderGemini') as string}</option>
               <option value="qwen">{t('llmProviderQwen') as string}</option>
+              <option value="ollama_qwen">{t('llmProviderOllamaQwen') as string}</option>
               <option value="deepseek">{t('llmProviderDeepSeek') as string}</option>
               <option value="anthropic">{t('llmProviderAnthropic') as string}</option>
               <option value="custom">{t('llmProviderCustom') as string}</option>
@@ -209,7 +267,7 @@ export const LlmPage: Component = () => {
             <TextInput
               type="url"
               label={t('llmBaseUrl')}
-              placeholder={t('llmBaseUrlPlaceholder') as string}
+              placeholder={baseUrlPlaceholder()}
               value={tab.form.llm_base_url}
               onInput={(event) => tab.setForm('llm_base_url', event.currentTarget.value)}
             />

@@ -73,7 +73,9 @@ export const en = {
   sectionLlm: 'LLM Settings',
   llmProvider: 'LLM Provider',
   llmProviderOpenai: 'OpenAI',
+  llmProviderGemini: 'Gemini',
   llmProviderQwen: 'Qwen Compatible',
+  llmProviderOllamaQwen: 'Ollama Qwen',
   llmProviderDeepSeek: 'DeepSeek',
   llmProviderAnthropic: 'Anthropic',
   llmProviderCustom: 'Custom',
@@ -92,6 +94,10 @@ export const en = {
   llmAuthType: 'Auth Type',
   llmAuthTypePlaceholder: 'bearer / api-key / none',
   llmValidationRequiredFields: 'Complete required LLM fields before saving: {fields}.',
+  llmGeminiHint:
+    'Use a fresh Gemini API key and model gemini-2.5-flash. The OpenAI-compatible base URL is prefilled for you.',
+  llmOllamaHint:
+    'Run Ollama on a LAN host, pull qwen3.6:latest, and set Base URL to http://YOUR-PC-IP:11434/v1. Keep API Key as "ollama"; Ollama ignores it.',
 
   sectionIm: 'Instant Messaging (IM)',
   imAdd: 'Add',
@@ -103,6 +109,8 @@ export const en = {
   imFeishuTitle: 'Feishu',
   imQqTitle: 'QQ',
   imTelegramTitle: 'Telegram',
+  imTelegramHint:
+    'Create the token with @BotFather, save, restart, then send the bot a direct message once so the device can reply in that chat.',
   imValidationIncompletePlatform:
     'Complete all required fields for {platform} before saving: {fields}.',
   imWechatCredsFilled:
