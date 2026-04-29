@@ -1,0 +1,68 @@
+version: 1.0.0
+# Devices Configuration
+devices:
+
+  - name: fake_audio_dac
+    chip: none
+    type: audio_codec
+    version: default
+    init_skip: true
+    peripherals:
+      - name: i2s_audio_out
+
+  - name: fake_camera
+    type: camera
+    version: default
+    sub_type: "dvp"
+    init_skip: true
+    peripherals:
+      - name: i2c_master
+        frequency: 100000
+
+  - name: camera
+    type: custom
+    version: default
+    dependencies:
+      espressif/usb_host_uvc: "2.4.2"
+
+  - name: audio_dac
+    type: custom
+    version: default
+    dependencies:
+      espressif/usb_host_uac: "^1.3.0"
+    config:
+      sample_rate_hz: 16000
+
+  - name: audio_adc
+    type: custom
+    version: default
+    config:
+      sample_rate_hz: 16000
+
+  - name: display_lcd
+    chip: ili9341
+    type: display_lcd
+    sub_type: spi
+    version: default
+    dependencies:
+      espressif/esp_lcd_ili9341: "*"
+    config:
+      mirror_x: true
+      mirror_y: false
+      x_max: 240
+      y_max: 320
+      io_spi_config:
+        cs_gpio_num: 10
+        dc_gpio_num: 13
+        spi_mode: 0
+        pclk_hz: 40000000
+        flags:
+          sio_mode: true
+
+      lcd_panel_config:
+        reset_gpio_num: 14
+        rgb_ele_order: LCD_RGB_ELEMENT_ORDER_BGR
+        bits_per_pixel: 16
+        data_endian: LCD_RGB_DATA_ENDIAN_BIG
+    peripherals:
+      - name: spi_display

@@ -1,0 +1,5 @@
+board: esp32_S3_DevKitC_1_ili9341_perfboard
+chip: esp32s3
+version: 1.0.0
+description: "ESP32-S3 DevKitC-1 perfboard build with SPI ILI9341 display"
+manufacturer: "Custom"
