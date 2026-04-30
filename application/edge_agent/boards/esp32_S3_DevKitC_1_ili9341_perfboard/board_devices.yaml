@@ -17,24 +17,6 @@ devices:
     dependencies:
       espressif/usb_host_uvc: "2.4.2"
 
-  - name: audio_dac
-    chip: none
-    type: audio_codec
-    version: default
-    config:
-      adc_enabled: false
-      dac_enabled: true
-      dac_max_channel: 1
-      dac_channel_mask: "1"
-    peripherals:
-      - name: i2s_audio_out
-
-  - name: audio_adc
-    type: custom
-    version: default
-    config:
-      sample_rate_hz: 16000
-
   - name: display_lcd
     chip: ili9341
     type: display_lcd

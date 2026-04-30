@@ -573,6 +573,762 @@
     ]
   },
   {
+    "id": "tg_lua_light_on",
+    "description": "LLM direct command alias: lua light on.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram lua light on",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua light on"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "{{event.text}}",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_lua_light_off",
+    "description": "LLM direct command alias: lua light off.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram lua light off",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua light off"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "{{event.text}}",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_lua_toggle_light",
+    "description": "LLM direct command alias: lua toggle light.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram lua toggle light",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua toggle light"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "{{event.text}}",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_lua_open_door",
+    "description": "LLM direct command alias: lua open door.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram lua open door",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua open door"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "{{event.text}}",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_lua_close_door",
+    "description": "LLM direct command alias: lua close door.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram lua close door",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua close door"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "{{event.text}}",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_lua_toggle_door",
+    "description": "LLM direct command alias: lua toggle door.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram lua toggle door",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua toggle door"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "{{event.text}}",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_lua_status",
+    "description": "LLM direct command alias: lua status.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram lua status",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua status"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "{{event.text}}",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_lua_temperature",
+    "description": "LLM direct command alias: lua temperature.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram lua temperature",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua temperature"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "{{event.text}}",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_lua_pressure",
+    "description": "LLM direct command alias: lua pressure.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram lua pressure",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua pressure"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "{{event.text}}",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_lua_ldr",
+    "description": "LLM direct command alias: lua ldr.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram lua ldr",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua ldr"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "{{event.text}}",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_lua_wifi_status",
+    "description": "LLM direct command alias: lua wifi status.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram lua wifi status",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua wifi status"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "{{event.text}}",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_lua_rfid_status",
+    "description": "LLM direct command alias: lua rfid status.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram lua rfid status",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua rfid status"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "{{event.text}}",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_builtin_display_smoke_cmd",
+    "description": "Whitelisted built-in script launch: display smoke.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram builtin display smoke",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua --run --path builtin/bringup_display_smoke.lua --timeout-ms 5000"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/bringup_display_smoke.lua",
+          "timeout_ms": 5000
+        }
+      },
+      {
+        "type": "send_message",
+        "input": {
+          "channel": "{{event.source_channel}}",
+          "chat_id": "{{event.chat_id}}"
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_alias_display_smoke_cmd",
+    "description": "Alias: display smoke.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram alias display smoke",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua display"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/bringup_display_smoke.lua",
+          "timeout_ms": 5000
+        }
+      },
+      {
+        "type": "send_message",
+        "input": {
+          "channel": "{{event.source_channel}}",
+          "chat_id": "{{event.chat_id}}"
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_builtin_joystick_smoke_cmd",
+    "description": "Whitelisted built-in script launch: joystick smoke.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram builtin joystick smoke",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua --run --path builtin/bringup_joystick_smoke.lua --timeout-ms 5000"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/bringup_joystick_smoke.lua",
+          "timeout_ms": 5000
+        }
+      },
+      {
+        "type": "send_message",
+        "input": {
+          "channel": "{{event.source_channel}}",
+          "chat_id": "{{event.chat_id}}"
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_alias_joystick_smoke_cmd",
+    "description": "Alias: joystick smoke.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram alias joystick smoke",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua joystick"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/bringup_joystick_smoke.lua",
+          "timeout_ms": 5000
+        }
+      },
+      {
+        "type": "send_message",
+        "input": {
+          "channel": "{{event.source_channel}}",
+          "chat_id": "{{event.chat_id}}"
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_builtin_sds011_parse_cmd",
+    "description": "Whitelisted built-in script launch: SDS011 parse smoke.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram builtin sds011 parse",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua --run --path builtin/bringup_sds011_parse.lua --timeout-ms 8000"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/bringup_sds011_parse.lua",
+          "timeout_ms": 8000
+        }
+      },
+      {
+        "type": "send_message",
+        "input": {
+          "channel": "{{event.source_channel}}",
+          "chat_id": "{{event.chat_id}}"
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_alias_sds011_parse_cmd",
+    "description": "Alias: SDS011 parse smoke.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram alias sds011 parse",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua sds011"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/bringup_sds011_parse.lua",
+          "timeout_ms": 8000
+        }
+      },
+      {
+        "type": "send_message",
+        "input": {
+          "channel": "{{event.source_channel}}",
+          "chat_id": "{{event.chat_id}}"
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_builtin_mpu6050_smoke_cmd",
+    "description": "Whitelisted built-in script launch: MPU6050 smoke.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram builtin mpu6050 smoke",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua --run --path builtin/bringup_mpu6050_smoke.lua --timeout-ms 5000"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/bringup_mpu6050_smoke.lua",
+          "timeout_ms": 5000
+        }
+      },
+      {
+        "type": "send_message",
+        "input": {
+          "channel": "{{event.source_channel}}",
+          "chat_id": "{{event.chat_id}}"
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_alias_mpu6050_smoke_cmd",
+    "description": "Alias: MPU6050 smoke.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram alias mpu6050 smoke",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua mpu6050"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/bringup_mpu6050_smoke.lua",
+          "timeout_ms": 5000
+        }
+      },
+      {
+        "type": "send_message",
+        "input": {
+          "channel": "{{event.source_channel}}",
+          "chat_id": "{{event.chat_id}}"
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_builtin_dashboard_cmd",
+    "description": "Whitelisted built-in script launch: dashboard console.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram builtin dashboard",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua --run --path builtin/dashboard_air_console.lua --timeout-ms 35000"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/dashboard_air_console.lua",
+          "timeout_ms": 35000
+        }
+      },
+      {
+        "type": "send_message",
+        "input": {
+          "channel": "{{event.source_channel}}",
+          "chat_id": "{{event.chat_id}}"
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_alias_dashboard_cmd",
+    "description": "Alias: dashboard console.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram alias dashboard",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua dashboard"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/dashboard_air_console.lua",
+          "timeout_ms": 35000
+        }
+      },
+      {
+        "type": "send_message",
+        "input": {
+          "channel": "{{event.source_channel}}",
+          "chat_id": "{{event.chat_id}}"
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_builtin_rc522_smoke_cmd",
+    "description": "Whitelisted built-in script launch: RC522 smoke.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram builtin rc522 smoke",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua --run --path builtin/bringup_rc522_smoke.lua --timeout-ms 35000"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/bringup_rc522_smoke.lua",
+          "timeout_ms": 35000
+        }
+      },
+      {
+        "type": "send_message",
+        "input": {
+          "channel": "{{event.source_channel}}",
+          "chat_id": "{{event.chat_id}}"
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_alias_rc522_smoke_cmd",
+    "description": "Alias: RC522 smoke.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram alias rc522 smoke",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua rc522"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/bringup_rc522_smoke.lua",
+          "timeout_ms": 35000
+        }
+      },
+      {
+        "type": "send_message",
+        "input": {
+          "channel": "{{event.source_channel}}",
+          "chat_id": "{{event.chat_id}}"
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_builtin_servo_smoke_cmd",
+    "description": "Whitelisted built-in script launch: servo lock smoke.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram builtin servo smoke",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua --run --path builtin/bringup_servo_lock_smoke.lua --timeout-ms 35000"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/bringup_servo_lock_smoke.lua",
+          "timeout_ms": 35000
+        }
+      },
+      {
+        "type": "send_message",
+        "input": {
+          "channel": "{{event.source_channel}}",
+          "chat_id": "{{event.chat_id}}"
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_alias_servo_smoke_cmd",
+    "description": "Alias: servo lock smoke.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram alias servo smoke",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "lua servo"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/bringup_servo_lock_smoke.lua",
+          "timeout_ms": 35000
+        }
+      },
+      {
+        "type": "send_message",
+        "input": {
+          "channel": "{{event.source_channel}}",
+          "chat_id": "{{event.chat_id}}"
+        }
+      }
+    ]
+  },
+  {
     "id": "im_any_message_agent",
     "description": "Route IM text messages to the agent.",
     "enabled": true,

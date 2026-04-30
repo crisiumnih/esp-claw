@@ -198,6 +198,9 @@ esp_err_t app_claw_start(const app_claw_config_t *config,
     claw_core_config_t core_config = {0};
     claw_event_router_config_t router_config = {
         .rules_path = NULL,
+        .max_rules = 64,
+        .max_actions_per_rule = 4,
+        .cap_output_size = 1024,
         .task_stack_size = 8 * 1024,
         .task_priority = 5,
         .task_core = tskNO_AFFINITY,

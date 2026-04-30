@@ -61,7 +61,7 @@ local function new_device_from_opts(opts)
             assert(opts.scl, "bmp388.new: missing 'scl'"),
             opts.frequency or opts.freq_hz or DEFAULT_FREQ_HZ
         )
-        owns_bus = true
+        owns_bus = opts.owns_bus ~= false
     end
 
     local addrs = opts.addr and { opts.addr } or DEFAULT_ADDRS

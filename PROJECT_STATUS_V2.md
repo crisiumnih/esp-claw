@@ -34,12 +34,6 @@ Build a practical smart-home controller that supports:
   - CS/SS: `GPIO8`
   - RST: `GPIO9`
   - host: `SPI2`
-- speaker / audio out:
-  - current board audio path uses I2S out for `MAX98357A`
-  - BCLK: `GPIO39`
-  - LRCLK/WS: `GPIO40`
-  - DIN: `GPIO47`
-  - output mode: `mono`
 
 ## Full GPIO Map
 
@@ -75,12 +69,6 @@ Build a practical smart-home controller that supports:
   - tactile button input
 - `GPIO21`:
   - joystick switch
-- `GPIO39`:
-  - MAX98357A `BCLK`
-- `GPIO40`:
-  - MAX98357A `LRCLK/WS`
-- `GPIO47`:
-  - MAX98357A `DIN`
 - `GPIO38`:
   - LED mock light output
 - `GPIO41`:
@@ -113,10 +101,6 @@ Build a practical smart-home controller that supports:
   - `MISO -> GPIO7`
   - `SDA/SS -> GPIO8`
   - `RST -> GPIO9`
-- MAX98357A:
-  - `BCLK -> GPIO39`
-  - `LRC/WS -> GPIO40`
-  - `DIN -> GPIO47`
 
 ## What Was Added
 
@@ -135,6 +119,8 @@ Build a practical smart-home controller that supports:
   - `ldr`
   - `wifi status`
   - `rfid status`
+  - matching `lua ...` aliases for LLM-facing deterministic control
+  - whitelisted built-in Lua script launch commands for smoke tests and dashboard bring-up
 - BMP388 Lua helper and smoke test added
 - tactile button to LED control added
 - servo lock control added
@@ -145,7 +131,6 @@ Build a practical smart-home controller that supports:
   - sensor state
   - lock state
   - RFID state
-  - audio state
   - Wi-Fi state
   - integrated summary home page
 
@@ -165,14 +150,10 @@ Verified on hardware:
 - servo control path
 - direct predefined Telegram command path
 
-Pending final hardware verification:
-
-- speaker / audio tone output
-
 Note:
 
-- audio is the main remaining hardware path that was not fully validated on-board
-- the rest of the current prototype stack has been brought up and exercised in some form
+- the active prototype no longer includes the speaker/audio path
+- the current hardware focus is light, lock, RFID, TFT, joystick, BMP388, and LDR
 
 ## Important Fixes Made
 
@@ -185,6 +166,9 @@ Note:
   - `dashboard_air_console.lua`
   - `lib_dashboard_air_console.lua`
   so it can fit under the Lua script runner size limit
+- app router capacity was increased so the expanded direct-command and alias rule set can boot
+  - router `max_rules` raised to `64`
+- speaker/audio path was removed from the active board config and dashboard
 
 ## Known Issues / Current Debug Focus
 
@@ -193,35 +177,8 @@ Note:
   - `SPI bus already initialized`
   this should now be reduced by the SPI reuse handling, but it still needs on-board confirmation
 - the dashboard had exceeded the direct Lua runner size limit before the split
-- speaker support is still tone-first only
-  - not voice assistant playback yet
 - predefined device control currently uses exact lowercase matches in router rules
   - natural-language paraphrasing still needs an LLM translation layer on top
-
-## Speaker Note
-
-Current board audio output is defined for `MAX98357A` on:
-
-- `GPIO39` = `BCLK`
-- `GPIO40` = `LRCLK/WS`
-- `GPIO47` = `DIN`
-- I2S output is configured as `mono`
-
-The speaker should connect to the amplifier module, not directly to the ESP32:
-
-- `MAX98357A SPK+` -> speaker `+`
-- `MAX98357A SPK-` -> speaker `-`
-
-Power and control wiring for the amplifier:
-
-- `VIN` -> `5V`
-- `GND` -> `GND`
-- `SD/EN` -> `3V3` for always-on, or a GPIO later for mute control
-
-For this phase, the software target is only:
-
-- boot / feedback tones
-- success / alert tones
 
 ## LLM Control Note
 
@@ -296,6 +253,44 @@ Current exact commands:
 - `wifi status`
 - `rfid status`
 
+Current LLM-safe prefixed aliases:
+
+- `lua light on`
+- `lua light off`
+- `lua toggle light`
+- `lua open door`
+- `lua close door`
+- `lua toggle door`
+- `lua status`
+- `lua temperature`
+- `lua pressure`
+- `lua ldr`
+- `lua wifi status`
+- `lua rfid status`
+
+Current whitelisted built-in Lua launch commands:
+
+- `lua --run --path builtin/bringup_display_smoke.lua --timeout-ms 5000`
+- `lua --run --path builtin/bringup_joystick_smoke.lua --timeout-ms 5000`
+- `lua --run --path builtin/bringup_sds011_parse.lua --timeout-ms 8000`
+- `lua --run --path builtin/bringup_mpu6050_smoke.lua --timeout-ms 5000`
+- `lua --run --path builtin/dashboard_air_console.lua --timeout-ms 35000`
+- `lua --run --path builtin/bringup_rc522_smoke.lua --timeout-ms 35000`
+- `lua --run --path builtin/bringup_servo_lock_smoke.lua --timeout-ms 35000`
+
+These are intentionally whitelisted exact strings, not arbitrary Lua execution.
+That keeps the LLM/control surface bounded to known scripts only.
+
+Short aliases for easy typing:
+
+- `lua display`
+- `lua joystick`
+- `lua sds011`
+- `lua mpu6050`
+- `lua dashboard`
+- `lua rc522`
+- `lua servo`
+
 This is the correct control foundation for the project because:
 
 - it avoids hallucinated GPIO/tool syntax
@@ -330,6 +325,18 @@ It should be:
 4. execute only through the direct command/device layer
 
 That is how commands like `open the door via Telegram` become reliable instead of conversational guesses.
+
+For small local models, a practical near-term pattern is:
+
+- ask the LLM to emit one exact prefixed control string such as:
+  - `lua light on`
+  - `lua open door`
+  - `lua status`
+- or one exact whitelisted built-in script launch such as:
+  - `lua --run --path builtin/dashboard_air_console.lua --timeout-ms 35000`
+  - `lua --run --path builtin/bringup_rc522_smoke.lua --timeout-ms 35000`
+- route that exact string into the deterministic Lua command handler
+- return the actual hardware result back to Telegram
 - `is the door locked`
 
 ## How To Add Context To The LLM Properly
@@ -382,7 +389,6 @@ Each request should include the latest state snapshot:
 - pressure
 - LDR level
 - last RFID UID if available
-- audio ready/not ready
 
 That lets the LLM answer with awareness instead of guessing.
 

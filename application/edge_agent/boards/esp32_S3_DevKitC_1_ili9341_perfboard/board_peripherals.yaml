@@ -10,24 +10,6 @@ peripherals:
         sda: 41
         scl: 42
 
-  - name: i2s_audio_out
-    type: i2s
-    role: master
-    format: std-out
-    config:
-      port: 0
-      sample_rate_hz: 16000
-      mclk_multiple: 256
-      data_bit_width: 16
-      slot_bit_width: I2S_SLOT_BIT_WIDTH_AUTO
-      slot_mode: I2S_SLOT_MODE_MONO
-      slot_mask: I2S_STD_SLOT_LEFT
-      ws_width: 16
-      pins:
-        bclk: 39
-        ws: 40
-        dout: 47
-
   - name: spi_display
     type: spi
     role: master

@@ -8,7 +8,6 @@ local button = require("button")
 local bmp388 = require("lib_bmp388")
 local state_store = require("lib_home_state")
 local rc522_ok, rc522 = pcall(require, "rc522")
-local audio_ok, audio = pcall(require, "audio")
 local mcpwm_ok, mcpwm = pcall(require, "mcpwm")
 
 local JOY_X_GPIO = 1
@@ -63,7 +62,6 @@ local PAGES = {
     { id = "light", title = "Light" },
     { id = "sense", title = "Sense" },
     { id = "lock", title = "Lock" },
-    { id = "audio", title = "Audio" },
     { id = "wifi", title = "Wi-Fi" },
     { id = "inputs", title = "Stick" },
 }
@@ -72,9 +70,8 @@ local MENU_ITEMS = {
     { title = "Light", page = 2, icon = "light" },
     { title = "Sense", page = 3, icon = "sense" },
     { title = "Lock", page = 4, icon = "lock" },
-    { title = "Audio", page = 5, icon = "audio" },
-    { title = "Wi-Fi", page = 6, icon = "wifi" },
-    { title = "Stick", page = 7, icon = "stick" },
+    { title = "Wi-Fi", page = 5, icon = "wifi" },
+    { title = "Stick", page = 6, icon = "stick" },
 }
 
 local function draw_text(x, y, text, rgb, font_size)
@@ -172,13 +169,6 @@ local function draw_lock_icon(x, y, rgb)
     display.draw_line(x + 8, y - 8, x + 8, y - 2, rgb[1], rgb[2], rgb[3])
 end
 
-local function draw_audio_icon(x, y, rgb)
-    display.fill_round_rect(x - 14, y - 8, 10, 16, 3, rgb[1], rgb[2], rgb[3])
-    display.fill_triangle(x - 4, y - 10, x + 8, y - 18, x + 8, y + 18, rgb[1], rgb[2], rgb[3])
-    display.draw_circle(x + 16, y, 6, rgb[1], rgb[2], rgb[3])
-    display.draw_circle(x + 16, y, 12, rgb[1], rgb[2], rgb[3])
-end
-
 local function draw_menu_icon(kind, x, y, rgb)
     if kind == "wifi" then
         draw_wifi_icon(x, y, rgb)
@@ -188,8 +178,6 @@ local function draw_menu_icon(kind, x, y, rgb)
         draw_sense_icon(x, y, rgb)
     elseif kind == "lock" then
         draw_lock_icon(x, y, rgb)
-    elseif kind == "audio" then
-        draw_audio_icon(x, y, rgb)
     else
         draw_light_icon(x, y, rgb)
     end
@@ -247,6 +235,7 @@ local bmp, bmp_err = bmp388.new({
     sda = BMP_SDA_GPIO,
     scl = BMP_SCL_GPIO,
     frequency = BMP_FREQ_HZ,
+    owns_bus = false,
 })
 local rfid = nil
 local rfid_err = nil
@@ -268,8 +257,6 @@ if rc522_ok then
 else
     rfid_err = tostring(rc522)
 end
-local audio_output = nil
-local servo_pwm = nil
 local persisted_state = state_store.load()
 
 gpio.set_direction(JOY_SW_GPIO, "input")
@@ -294,9 +281,7 @@ local state = {
     bmp_error = bmp_err,
     temp_c = nil,
     pressure_hpa = nil,
-    audio_ready = false,
-    audio_source = "none",
-    servo_ready = false,
+    servo_ready = mcpwm_ok,
     servo_locked = persisted_state.servo_locked,
     servo_last = persisted_state.servo_last,
     rfid_ready = rfid ~= nil,
@@ -316,43 +301,19 @@ local function persist_state()
     })
 end
 
-local function try_open_audio_output()
-    if not audio_ok then
-        return nil, "audio module unavailable", nil
-    end
-
-    local names = { "audio_dac" }
-    for _, name in ipairs(names) do
-        local codec, rate, channels, bits = bm.get_audio_codec_output_params(name)
-        if codec then
-            local output, err = audio.new_output(codec, rate, channels, bits)
-            if output then
-                return output, name, {
-                    rate = rate,
-                    channels = channels,
-                    bits = bits,
-                }
-            end
-            state.audio_source = "open fail"
-        end
-    end
-
-    return nil, "no output", nil
-end
-
-local function try_open_servo_pwm()
+local function with_servo(fn)
     if not mcpwm_ok then
-        return nil, "mcpwm unavailable"
+        return false, "mcpwm unavailable"
     end
 
     local ok_pwm, pwm_or_err = pcall(mcpwm.new, {
         gpio = SERVO_GPIO,
         frequency_hz = SERVO_FREQ_HZ,
-        duty_percent = SERVO_LOCK_DUTY,
+        duty_percent = state.servo_locked and SERVO_LOCK_DUTY or SERVO_UNLOCK_DUTY,
         resolution_hz = 1000000,
     })
     if not ok_pwm then
-        return nil, tostring(pwm_or_err)
+        return false, tostring(pwm_or_err)
     end
 
     local pwm = pwm_or_err
@@ -361,17 +322,17 @@ local function try_open_servo_pwm()
     end)
     if not ok_start then
         pcall(function() pwm:close() end)
-        return nil, tostring(start_err)
+        return false, tostring(start_err)
     end
 
-    return pwm, nil
+    local ok_run, run_err = pcall(fn, pwm)
+    pcall(function() pwm:stop() end)
+    pcall(function() pwm:close() end)
+    if not ok_run then
+        return false, tostring(run_err)
+    end
+    return true, nil
 end
-
-audio_output, state.audio_source = try_open_audio_output()
-state.audio_ready = audio_output ~= nil
-
-servo_pwm, state.servo_last = try_open_servo_pwm()
-state.servo_ready = servo_pwm ~= nil
 
 local function cleanup()
     pcall(function() joy_x:close() end)
@@ -388,34 +349,19 @@ local function cleanup()
         pcall(function() rfid:close() end)
         rfid = nil
     end
-    if servo_pwm then
-        pcall(function() servo_pwm:stop() end)
-        pcall(function() servo_pwm:close() end)
-        servo_pwm = nil
-    end
-    if audio_output then
-        pcall(audio.close, audio_output)
-        audio_output = nil
-    end
     pcall(display.deinit)
 end
 
 local function apply_servo()
-    if not servo_pwm then
-        return
-    end
-
     local duty = state.servo_locked and SERVO_LOCK_DUTY or SERVO_UNLOCK_DUTY
-    pcall(function()
-        servo_pwm:set_duty(duty)
+    local ok_servo, err_servo = with_servo(function(pwm)
+        pwm:set_duty(duty)
+        delay.delay_ms(900)
     end)
-end
-
-local function play_feedback(freq_hz, duration_ms, volume_pct)
-    if not audio_output then
-        return
+    state.servo_ready = ok_servo
+    if not ok_servo and err_servo then
+        state.servo_last = "servo err"
     end
-    pcall(audio.play_tone, audio_output, freq_hz, duration_ms, volume_pct or 75, true)
 end
 
 local function apply_light(origin)
@@ -429,7 +375,6 @@ local function set_light(on, origin)
     state.light_on = on and true or false
     apply_light(origin)
     persist_state()
-    play_feedback(state.light_on and 880 or 440, 70, 70)
 end
 
 local function toggle_light(origin)
@@ -441,7 +386,6 @@ local function set_lock(locked, origin)
     state.servo_last = origin or (state.servo_locked and "locked" or "open")
     apply_servo()
     persist_state()
-    play_feedback(state.servo_locked and 620 or 1040, 90, 75)
 end
 
 local function toggle_lock(origin)
@@ -614,16 +558,6 @@ local function handle_nav(event)
         return
     end
 
-    if state.screen == 5 and event == "right" then
-        play_feedback(523, 100, 80)
-        delay.delay_ms(60)
-        play_feedback(659, 100, 80)
-        delay.delay_ms(60)
-        play_feedback(784, 140, 80)
-        state.last_event = "audio test"
-        return
-    end
-
     if event == "up" then
         state.screen = state.screen - 1
         if state.screen < 2 then
@@ -664,7 +598,6 @@ local function lock_text()
 end
 
 local function draw_home_page(wifi)
-    local audio_text = state.audio_ready and "READY" or "OFF"
     local subtitle = wifi.online and wifi.ip or wifi.ssid
 
     draw_header("ESP Home", subtitle)
@@ -674,7 +607,7 @@ local function draw_home_page(wifi)
     draw_compact_metric(30, 124, "LDR", ldr_text(), TEXT)
     draw_compact_metric(128, 124, "Light", light_text(), state.light_on and GOOD or BAD)
     draw_compact_metric(30, 154, "Lock", lock_text(), state.servo_locked and GOOD or WARN)
-    draw_compact_metric(128, 154, "Audio", audio_text, state.audio_ready and GOOD or WARN)
+    draw_compact_metric(128, 154, "RFID", state.rfid_uid or "--", state.rfid_ready and TEXT or WARN)
 
     for i, item in ipairs(MENU_ITEMS) do
         local col = (i - 1) % 2
@@ -722,20 +655,6 @@ local function draw_lock_page()
     draw_footer("LEFT  RIGHT")
 end
 
-local function draw_audio_page()
-    local subtitle = state.audio_ready and "right = test" or "speaker off"
-    local source = state.audio_source or "none"
-
-    draw_header("Audio", subtitle)
-    draw_card(16, 84, 208, 140, state.audio_ready and GOOD or WARN, true)
-    draw_centered(102, state.audio_ready and "Speaker Ready" or "No Output", TEXT, 18)
-    draw_action_button(54, 132, 132, 42, state.audio_ready and "TEST" or "OFF", state.audio_ready)
-    draw_centered(194, source, MUTED, 15)
-    draw_metric_row(238, "Pins", "39/40/47", TEXT)
-    draw_metric_row(264, "Mode", "mono", TEXT)
-    draw_footer("LEFT  RIGHT")
-end
-
 local function draw_wifi_page(wifi)
     draw_header("Wi-Fi", wifi.online and "online" or "offline")
     draw_card(16, 82, 208, 146, wifi.online and GOOD or WARN, true)
@@ -771,17 +690,14 @@ end
 local function draw_status_strip()
     draw_text(12, 0, "", BG, 1)
     local wifi_text = system.ip() and "NET" or "NO-NET"
-    local audio_text = state.audio_ready and "AUD" or "NO-AUD"
     local servo_text = state.servo_ready and "SRV" or "NO-SRV"
     local rfid_text = state.rfid_ready and "RFID" or "NO-RFID"
     local wifi_color = system.ip() and GOOD or WARN
-    local audio_color = state.audio_ready and GOOD or WARN
     local servo_color = state.servo_ready and GOOD or WARN
     local rfid_color = state.rfid_ready and GOOD or WARN
     draw_text(8, 4, wifi_text, wifi_color, 11)
-    draw_text(58, 4, audio_text, audio_color, 11)
-    draw_text(118, 4, servo_text, servo_color, 11)
-    draw_text(178, 4, rfid_text, rfid_color, 11)
+    draw_text(88, 4, servo_text, servo_color, 11)
+    draw_text(158, 4, rfid_text, rfid_color, 11)
 end
 
 local function render()
@@ -799,8 +715,6 @@ local function render()
     elseif state.screen == 4 then
         draw_lock_page()
     elseif state.screen == 5 then
-        draw_audio_page()
-    elseif state.screen == 6 then
         draw_wifi_page(wifi)
     else
         draw_inputs_page()
@@ -813,10 +727,6 @@ end
 local run_ok, run_err = xpcall(function()
     refresh_sensors()
     apply_light()
-    apply_servo()
-    play_feedback(660, 80, 70)
-    delay.delay_ms(50)
-    play_feedback(880, 100, 70)
 
     for i = 1, LOOP_COUNT do
         button.dispatch()
