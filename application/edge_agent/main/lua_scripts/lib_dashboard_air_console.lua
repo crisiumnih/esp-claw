@@ -6,6 +6,7 @@ local gpio = require("gpio")
 local system = require("system")
 local button = require("button")
 local bmp388 = require("lib_bmp388")
+local state_store = require("lib_home_state")
 local rc522_ok, rc522 = pcall(require, "rc522")
 local audio_ok, audio = pcall(require, "audio")
 local mcpwm_ok, mcpwm = pcall(require, "mcpwm")
@@ -269,6 +270,7 @@ else
 end
 local audio_output = nil
 local servo_pwm = nil
+local persisted_state = state_store.load()
 
 gpio.set_direction(JOY_SW_GPIO, "input")
 gpio.set_direction(LED_GPIO, "output")
@@ -284,8 +286,8 @@ local state = {
     last_event = "idle",
     x_latched = false,
     y_latched = false,
-    light_on = false,
-    light_origin = "boot",
+    light_on = persisted_state.light_on,
+    light_origin = persisted_state.light_origin,
     ldr_mv = 0,
     bmp_ok = bmp ~= nil,
     bmp_addr = bmp and bmp:address() or nil,
@@ -295,13 +297,24 @@ local state = {
     audio_ready = false,
     audio_source = "none",
     servo_ready = false,
-    servo_locked = true,
-    servo_last = "boot",
+    servo_locked = persisted_state.servo_locked,
+    servo_last = persisted_state.servo_last,
     rfid_ready = rfid ~= nil,
-    rfid_last = rfid and "ready" or tostring(rfid_err or "init fail"),
-    rfid_uid = "--",
+    rfid_last = persisted_state.rfid_last or (rfid and "ready" or tostring(rfid_err or "init fail")),
+    rfid_uid = persisted_state.rfid_uid or "--",
     rfid_seen_uid = nil,
 }
+
+local function persist_state()
+    state_store.save({
+        light_on = state.light_on,
+        light_origin = state.light_origin,
+        servo_locked = state.servo_locked,
+        servo_last = state.servo_last,
+        rfid_uid = state.rfid_uid,
+        rfid_last = state.rfid_last,
+    })
+end
 
 local function try_open_audio_output()
     if not audio_ok then
@@ -415,6 +428,7 @@ end
 local function set_light(on, origin)
     state.light_on = on and true or false
     apply_light(origin)
+    persist_state()
     play_feedback(state.light_on and 880 or 440, 70, 70)
 end
 
@@ -426,6 +440,7 @@ local function set_lock(locked, origin)
     state.servo_locked = locked and true or false
     state.servo_last = origin or (state.servo_locked and "locked" or "open")
     apply_servo()
+    persist_state()
     play_feedback(state.servo_locked and 620 or 1040, 90, 75)
 end
 
@@ -458,7 +473,40 @@ local function read_wifi_snapshot()
     }
 end
 
+local function sync_external_state()
+    local external = state_store.load()
+    local changed = false
+
+    if external.light_on ~= state.light_on then
+        state.light_on = external.light_on
+        state.light_origin = external.light_origin or "sync"
+        apply_light()
+        changed = true
+    end
+
+    if external.servo_locked ~= state.servo_locked then
+        state.servo_locked = external.servo_locked
+        state.servo_last = external.servo_last or "sync"
+        apply_servo()
+        changed = true
+    end
+
+    if external.rfid_uid and external.rfid_uid ~= state.rfid_uid then
+        state.rfid_uid = external.rfid_uid
+        changed = true
+    end
+    if external.rfid_last and external.rfid_last ~= state.rfid_last then
+        state.rfid_last = external.rfid_last
+        changed = true
+    end
+
+    if changed then
+        state.last_event = "sync"
+    end
+end
+
 local function refresh_sensors()
+    sync_external_state()
     state.ldr_mv = ldr:read()
 
     local btn_level = button.get_key_level(tactile)
@@ -483,14 +531,20 @@ local function refresh_sensors()
         local uid = rfid:read_uid()
         if uid then
             state.rfid_ready = true
-            state.rfid_uid = uid
-            state.rfid_last = "tag"
+            if state.rfid_uid ~= uid or state.rfid_last ~= "tag" then
+                state.rfid_uid = uid
+                state.rfid_last = "tag"
+                persist_state()
+            end
             if state.rfid_seen_uid ~= uid then
                 state.rfid_seen_uid = uid
                 toggle_lock("rfid")
             end
         else
-            state.rfid_last = "idle"
+            if state.rfid_last ~= "idle" then
+                state.rfid_last = "idle"
+                persist_state()
+            end
             state.rfid_seen_uid = nil
         end
     end
@@ -677,7 +731,7 @@ local function draw_audio_page()
     draw_centered(102, state.audio_ready and "Speaker Ready" or "No Output", TEXT, 18)
     draw_action_button(54, 132, 132, 42, state.audio_ready and "TEST" or "OFF", state.audio_ready)
     draw_centered(194, source, MUTED, 15)
-    draw_metric_row(238, "Pins", "35/36/37", TEXT)
+    draw_metric_row(238, "Pins", "39/40/47", TEXT)
     draw_metric_row(264, "Mode", "mono", TEXT)
     draw_footer("LEFT  RIGHT")
 end
@@ -758,6 +812,7 @@ end
 
 local run_ok, run_err = xpcall(function()
     refresh_sensors()
+    apply_light()
     apply_servo()
     play_feedback(660, 80, 70)
     delay.delay_ms(50)

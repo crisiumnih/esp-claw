@@ -36,9 +36,9 @@ Build a practical smart-home controller that supports:
   - host: `SPI2`
 - speaker / audio out:
   - current board audio path uses I2S out for `MAX98357A`
-  - BCLK: `GPIO35`
-  - LRCLK/WS: `GPIO36`
-  - DIN: `GPIO37`
+  - BCLK: `GPIO39`
+  - LRCLK/WS: `GPIO40`
+  - DIN: `GPIO47`
   - output mode: `mono`
 
 ## Full GPIO Map
@@ -75,11 +75,11 @@ Build a practical smart-home controller that supports:
   - tactile button input
 - `GPIO21`:
   - joystick switch
-- `GPIO35`:
+- `GPIO39`:
   - MAX98357A `BCLK`
-- `GPIO36`:
+- `GPIO40`:
   - MAX98357A `LRCLK/WS`
-- `GPIO37`:
+- `GPIO47`:
   - MAX98357A `DIN`
 - `GPIO38`:
   - LED mock light output
@@ -114,9 +114,9 @@ Build a practical smart-home controller that supports:
   - `SDA/SS -> GPIO8`
   - `RST -> GPIO9`
 - MAX98357A:
-  - `BCLK -> GPIO35`
-  - `LRC/WS -> GPIO36`
-  - `DIN -> GPIO37`
+  - `BCLK -> GPIO39`
+  - `LRC/WS -> GPIO40`
+  - `DIN -> GPIO47`
 
 ## What Was Added
 
@@ -126,6 +126,15 @@ Build a practical smart-home controller that supports:
   - LLM connectivity
 - Telegram bot integration is working
 - LLM provider path is working
+- predefined direct Telegram command routing added for:
+  - `light on/off/toggle`
+  - `door open/close/toggle`
+  - `status`
+  - `temperature`
+  - `pressure`
+  - `ldr`
+  - `wifi status`
+  - `rfid status`
 - BMP388 Lua helper and smoke test added
 - tactile button to LED control added
 - servo lock control added
@@ -154,6 +163,7 @@ Verified on hardware:
 - tactile button input
 - LED mock light output
 - servo control path
+- direct predefined Telegram command path
 
 Pending final hardware verification:
 
@@ -185,14 +195,16 @@ Note:
 - the dashboard had exceeded the direct Lua runner size limit before the split
 - speaker support is still tone-first only
   - not voice assistant playback yet
+- predefined device control currently uses exact lowercase matches in router rules
+  - natural-language paraphrasing still needs an LLM translation layer on top
 
 ## Speaker Note
 
 Current board audio output is defined for `MAX98357A` on:
 
-- `GPIO35` = `BCLK`
-- `GPIO36` = `LRCLK/WS`
-- `GPIO37` = `DIN`
+- `GPIO39` = `BCLK`
+- `GPIO40` = `LRCLK/WS`
+- `GPIO47` = `DIN`
 - I2S output is configured as `mono`
 
 The speaker should connect to the amplifier module, not directly to the ESP32:
@@ -258,6 +270,66 @@ Example useful actions:
 - `close the door`
 - `show room status`
 - `what is the temperature`
+
+## Direct Command Layer
+
+The current prototype now has a predefined command layer for Telegram so common actions do not depend on free-form LLM reasoning.
+
+Current exact commands:
+
+- `light on`
+- `turn on light`
+- `light off`
+- `turn off light`
+- `toggle light`
+- `light status`
+- `open door`
+- `door open`
+- `close door`
+- `door close`
+- `toggle door`
+- `door status`
+- `status`
+- `temperature`
+- `pressure`
+- `ldr`
+- `wifi status`
+- `rfid status`
+
+This is the correct control foundation for the project because:
+
+- it avoids hallucinated GPIO/tool syntax
+- it makes hardware actions deterministic
+- it keeps small local/cloud models usable
+- it gives the LLM a stable action vocabulary to target later
+
+## Next LLM Step
+
+The next LLM-facing improvement should not be “let the model control raw GPIO”.
+
+It should be:
+
+1. define a small action vocabulary:
+   - `light_on`
+   - `light_off`
+   - `light_toggle`
+   - `door_open`
+   - `door_close`
+   - `device_status`
+   - `temperature_read`
+   - `pressure_read`
+   - `ldr_read`
+2. inject current device context:
+   - light state
+   - door state
+   - latest BMP388 values
+   - LDR value
+   - Wi-Fi status
+   - last RFID UID
+3. let the LLM translate flexible language into one of those actions
+4. execute only through the direct command/device layer
+
+That is how commands like `open the door via Telegram` become reliable instead of conversational guesses.
 - `is the door locked`
 
 ## How To Add Context To The LLM Properly

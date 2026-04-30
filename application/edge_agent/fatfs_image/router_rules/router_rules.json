@@ -69,6 +69,510 @@
     ]
   },
   {
+    "id": "tg_light_on",
+    "description": "Direct device command: light on.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram light on",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "light on"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "light on",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_turn_on_light",
+    "description": "Direct device command: turn on light.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram turn on light",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "turn on light"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "turn on light",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_light_off",
+    "description": "Direct device command: light off.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram light off",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "light off"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "light off",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_turn_off_light",
+    "description": "Direct device command: turn off light.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram turn off light",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "turn off light"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "turn off light",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_toggle_light",
+    "description": "Direct device command: toggle light.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram toggle light",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "toggle light"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "toggle light",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_light_status",
+    "description": "Direct device command: light status.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram light status",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "light status"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "light status",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_open_door",
+    "description": "Direct device command: open door.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram open door",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "open door"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "open door",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_door_open",
+    "description": "Direct device command: door open.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram door open",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "door open"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "door open",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_door_status",
+    "description": "Direct device command: door status.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram door status",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "door status"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "door status",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_close_door",
+    "description": "Direct device command: close door.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram close door",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "close door"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "close door",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_door_close",
+    "description": "Direct device command: door close.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram door close",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "door close"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "door close",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_toggle_door",
+    "description": "Direct device command: toggle door.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram toggle door",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "toggle door"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "toggle door",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_status",
+    "description": "Direct device command: status.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram status",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "status"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "status",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_temperature",
+    "description": "Direct device command: temperature.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram temperature",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "temperature"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "temperature",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_pressure",
+    "description": "Direct device command: pressure.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram pressure",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "pressure"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "pressure",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_ldr",
+    "description": "Direct device command: ldr.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram ldr",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "ldr"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "ldr",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_wifi_status",
+    "description": "Direct device command: wifi status.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram wifi status",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "wifi status"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "wifi status",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tg_rfid_status",
+    "description": "Direct device command: rfid status.",
+    "enabled": true,
+    "consume_on_match": true,
+    "ack": "telegram rfid status",
+    "match": {
+      "event_type": "message",
+      "event_key": "text",
+      "content_type": "text",
+      "source_channel": "telegram",
+      "text": "rfid status"
+    },
+    "actions": [
+      {
+        "type": "run_script",
+        "input": {
+          "path": "builtin/home_direct_command.lua",
+          "args": {
+            "command": "rfid status",
+            "channel": "{{event.source_channel}}",
+            "chat_id": "{{event.chat_id}}",
+            "text": "{{event.text}}"
+          }
+        }
+      }
+    ]
+  },
+  {
     "id": "im_any_message_agent",
     "description": "Route IM text messages to the agent.",
     "enabled": true,

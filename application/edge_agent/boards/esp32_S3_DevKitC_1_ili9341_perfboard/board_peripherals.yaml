@@ -24,9 +24,9 @@ peripherals:
       slot_mask: I2S_STD_SLOT_LEFT
       ws_width: 16
       pins:
-        bclk: 35
-        ws: 36
-        dout: 37
+        bclk: 39
+        ws: 40
+        dout: 47
 
   - name: spi_display
     type: spi
